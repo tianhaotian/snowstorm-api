@@ -18,7 +18,6 @@ class AuthHandler : Handler<RoutingContext> {
             /**
              * TODO 若session未认证，则向其他模块或服务认证，认证后向session写入认证标记
              */
-            // 向其他地方验证，Overlord？
             if (true) {
                 println("auth successfully")
                 session.put("is_auth", true)

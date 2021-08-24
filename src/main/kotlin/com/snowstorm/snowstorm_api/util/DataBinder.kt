@@ -4,6 +4,7 @@ import io.vertx.core.MultiMap
 import io.vertx.core.json.JsonObject
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
+import kotlin.reflect.full.starProjectedType
 
 object DataBinder {
     private val STRING = String::class.starProjectedType

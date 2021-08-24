@@ -12,7 +12,9 @@ import io.vertx.core.impl.logging.LoggerFactory
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.BodyHandler
+import io.vertx.ext.web.handler.SessionHandler
 import io.vertx.ext.web.sstore.redis.RedisSessionStore
+import io.vertx.redis.client.Redis
 import java.util.*
 
 class Server : AbstractVerticle() {
@@ -41,13 +43,13 @@ class Server : AbstractVerticle() {
     router.route().handler(HttpLogHandler())
     router.route().handler(BodyHandler.create())
 
-    /*
     // TODO set from config
-    val sessionHandler = SessionHandler.create(RedisSessionStore(vertx, RedisHelper))
-            .setSessionTimeout(1800 * 1000)
+    val redis = if (ConfigUtil.redisConfig != null)
+      Redis.createClient(vertx, (ConfigUtil.redisConfig)?.getConnectionString()) else  Redis.createClient(vertx)
+    val sessionHandler = SessionHandler.create(RedisSessionStore.create(vertx, redis))
+            .setSessionTimeout(24 * 3600 * 1000)
             .setSessionCookieName("sid")
     router.route().handler(sessionHandler)
-            */
 
     router.route("/").handler(this::indexHandler)
 

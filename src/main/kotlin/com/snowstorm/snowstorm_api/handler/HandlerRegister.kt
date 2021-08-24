@@ -25,8 +25,6 @@ import java.util.UUID
  *       }
  *   }
  * 映射为：/api/adv_date/modify (只接收POST请求）
- *
- * @author <a href="http://stanzhai.site">Stan Zhai</a>
  */
 class HandlerRegister(private val router: Router) {
     companion object {
@@ -37,7 +35,7 @@ class HandlerRegister(private val router: Router) {
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     fun register(basePackage: String) {
-        synchronized(HandlerRegister.Companion, {
+        synchronized(Companion) {
             // 并发执行Reflection会有问题
             val reflection = Reflections(basePackage)
             val scanAnnotations = listOf(Api::class.java, Mob::class.java)
@@ -48,7 +46,7 @@ class HandlerRegister(private val router: Router) {
                 }
             }
             logPrinted = true
-        })
+        }
     }
 
     private fun extractHandler(handlerClass: Class<*>, prefix: String) {
@@ -66,7 +64,8 @@ class HandlerRegister(private val router: Router) {
 
     private fun createRoute(instance: Any, httpMethod: String, prefix: String, routeName: String, handler: Method,
                             auth: Annotation?) {
-        val path = "/$prefix/${StringUtils.toUnderline(routeName)}/${StringUtils.toUnderline(handler.name)}"
+        val replacePrefix = prefix.split("_handler").firstOrNull()
+        val path = "/$replacePrefix/${StringUtils.toUnderline(routeName)}/${StringUtils.toUnderline(handler.name)}"
 
         fun handlerFun(context: RoutingContext) {
             setTraceId(context)
@@ -119,7 +118,7 @@ class HandlerRegister(private val router: Router) {
         } else {
             UUID.randomUUID().toString()
         }
-        // 将traceId设置到vertx实例中，便于传递给客户端(如Mobius)，跟踪调用流程
+        // 将traceId设置到vertx实例中
         val localData = context.vertx().sharedData().getLocalMap<String, String>("http")
         localData["traceId"] = traceId
         // 便于设置到handler的返回结果中

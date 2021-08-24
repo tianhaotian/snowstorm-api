@@ -46,6 +46,7 @@ dependencies {
   implementation("org.projectlombok:lombok:1.18.20")
   implementation("com.alibaba:fastjson:1.2.76")
   implementation("org.reflections:reflections:0.9.11")
+  implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation(kotlin("stdlib-jdk8"))
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
